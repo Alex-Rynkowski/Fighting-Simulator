@@ -12,6 +12,9 @@ namespace Player
         Rigidbody _rb;
 
         float _whileTimer = 0;
+
+        bool IsGrounded => Physics.Raycast(transform.position, Vector3.down, 1.1f, LayerMask.GetMask("Ground"));
+
         void Start()
         {
             _rb = GetComponent<Rigidbody>();
@@ -19,10 +22,16 @@ namespace Player
 
         void Update()
         {
-            print(_rb.velocity);
             // var mp = Camera.main.ScreenPointToRay(Input.mousePosition);
             // print(mp);
-            if (Input.GetKeyDown(KeyCode.E))
+            SideJump(KeyCode.E, this.horizontalForce, this.verticalForce);
+            SideJump(KeyCode.Q, -this.horizontalForce, this.verticalForce);
+            
+        }
+
+        void SideJump(KeyCode userInput, float horizontalForce, float verticalForce)
+        {
+            if (Input.GetKeyDown(userInput) && IsGrounded)
             {
                 _rb.velocity = Vector3.zero;
                 _whileTimer = 0;
@@ -32,6 +41,7 @@ namespace Player
                     _rb.AddForce(new Vector3(horizontalForce, verticalForce, 0));
                 }
             }
+        
         }
     }
 }
