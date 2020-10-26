@@ -24,17 +24,15 @@ namespace Player
 
         void ForwardBackwardMovement(KeyCode userInput, float moveForce)
         {
-            if (Input.GetKey(userInput))
+            if (!Input.GetKey(userInput)) return;
+
+            if (Mathf.Abs(_rb.velocity.z) < 10)
             {
-                if (Mathf.Abs(_rb.velocity.z) < 10)
-                {
-                    _rb.AddForce(Vector3.forward * moveForce);
-                }
-                else
-                {
-                    _rb.velocity = Vector3.forward * moveForce;
-                }
+                _rb.AddForce(Vector3.forward * moveForce);
+                return;
             }
+
+            _rb.velocity = Vector3.forward * moveForce;
         }
 
         void LeftRightMovement(KeyCode userInput, float moveForce)
