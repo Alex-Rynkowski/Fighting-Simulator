@@ -26,7 +26,14 @@ namespace Player
         {
             if (Input.GetKey(userInput))
             {
-                _rb.AddForce(Vector3.forward * moveForce);
+                if (Mathf.Abs(_rb.velocity.z) < 10)
+                {
+                    _rb.AddForce(Vector3.forward * moveForce);
+                }
+                else
+                {
+                    _rb.velocity = Vector3.forward * moveForce;
+                }
             }
         }
 
