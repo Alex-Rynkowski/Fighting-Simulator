@@ -9,15 +9,15 @@ namespace Player_scripts
         [SerializeField] float verticalForce;
         Rigidbody _rb;
 
-        float _sideJumpTimer;
+        float _sideJumpTime;
         Ray _mouseStartPosition;
         Ray _mouseCurrentPosition;
-        
+
 
         bool CanSideJump =>
             (Mathf.Abs(_mouseCurrentPosition.direction.x) - Mathf.Abs(_mouseStartPosition.direction.x) >= .5f ||
              Mathf.Abs(_mouseStartPosition.direction.x) - Mathf.Abs(_mouseCurrentPosition.direction.x) >= .5f) &&
-            Time.time - _sideJumpTimer <= 1;
+            Time.time - _sideJumpTime <= 1;
 
         void Start()
         {
@@ -33,13 +33,11 @@ namespace Player_scripts
 
         void DoSideJump(KeyCode userInput, float horizontalForce, float verticalForce)
         {
-            var whileLoopTime = 0f;
-
             if (!Input.GetKey(userInput) || !PlayerServices.IsGrounded) return;
             if (Input.GetKeyDown(userInput) && PlayerServices.IsGrounded)
             {
                 _mouseStartPosition = Camera.main.ScreenPointToRay(Input.mousePosition);
-                _sideJumpTimer = Time.time;
+                _sideJumpTime = Time.time;
             }
 
             if (!CanSideJump) return;
@@ -47,8 +45,9 @@ namespace Player_scripts
             var mpStartPos = _mouseStartPosition.direction.x;
             var mpCurrentPos = _mouseCurrentPosition.direction.x;
 
-            _sideJumpTimer = 0;
-
+            _sideJumpTime = 0;
+            var whileLoopTime = 0f;
+            
             _rb.velocity = Vector3.zero;
             while (whileLoopTime < 1)
             {
