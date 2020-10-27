@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Player
+namespace Player_scripts
 {
     public class SideJump : MonoBehaviour
     {
@@ -12,7 +12,7 @@ namespace Player
         float _sideJumpTimer;
         Ray _mouseStartPosition;
         Ray _mouseCurrentPosition;
-        bool IsGrounded => Physics.Raycast(transform.position, Vector3.down, 1.1f, LayerMask.GetMask("Ground"));
+        
 
         bool CanSideJump =>
             (Mathf.Abs(_mouseCurrentPosition.direction.x) - Mathf.Abs(_mouseStartPosition.direction.x) >= .5f ||
@@ -35,8 +35,8 @@ namespace Player
         {
             var whileLoopTime = 0f;
 
-            if (!Input.GetKey(userInput) || !IsGrounded) return;
-            if (Input.GetKeyDown(userInput) && IsGrounded)
+            if (!Input.GetKey(userInput) || !PlayerServices.IsGrounded) return;
+            if (Input.GetKeyDown(userInput) && PlayerServices.IsGrounded)
             {
                 _mouseStartPosition = Camera.main.ScreenPointToRay(Input.mousePosition);
                 _sideJumpTimer = Time.time;
