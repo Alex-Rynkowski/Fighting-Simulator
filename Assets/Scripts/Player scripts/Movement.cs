@@ -6,13 +6,6 @@ namespace Player_scripts
     {
         [SerializeField] float moveForce = 10;
 
-        Rigidbody _rb;
-
-        void Start()
-        {
-            _rb = GetComponent<Rigidbody>();
-        }
-
         void Update()
         {
             ForwardBackwardMovement(KeyCode.W, moveForce);
@@ -23,22 +16,22 @@ namespace Player_scripts
 
         void ForwardBackwardMovement(KeyCode userInput, float moveForce)
         {
-            if (!Input.GetKey(userInput)) return;
+            if (!Input.GetKey(userInput) && PlayerServices.IsGrounded) return;
 
-            if (Mathf.Abs(_rb.velocity.z) < 10)
+            if (Mathf.Abs(PlayerServices.Rb.velocity.z) < 10)
             {
-                _rb.AddForce(Vector3.forward * moveForce);
+                PlayerServices.Rb.AddForce(Vector3.forward * moveForce);
                 return;
             }
 
-            _rb.velocity = Vector3.forward * moveForce;
+            PlayerServices.Rb.velocity = Vector3.forward * moveForce;
         }
 
         void LeftRightMovement(KeyCode userInput, float moveForce)
         {
-            if (Input.GetKey(userInput))
+            if (Input.GetKey(userInput) && PlayerServices.IsGrounded)
             {
-                _rb.AddForce(Vector3.right * moveForce);
+                PlayerServices.Rb.AddForce(Vector3.right * moveForce);
             }
         }
     }
