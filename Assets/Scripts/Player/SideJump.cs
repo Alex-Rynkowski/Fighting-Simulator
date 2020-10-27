@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class SideWayJump : MonoBehaviour
+    public class SideJump : MonoBehaviour
     {
         [SerializeField] float horizontalForce;
         [SerializeField] float verticalForce;
@@ -28,13 +28,12 @@ namespace Player
         {
             _mouseCurrentPosition = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            SideJump(KeyCode.E, this.horizontalForce, this.verticalForce);
+            DoSideJump(KeyCode.E, this.horizontalForce, this.verticalForce);
         }
 
-        void SideJump(KeyCode userInput, float horizontalForce, float verticalForce)
+        void DoSideJump(KeyCode userInput, float horizontalForce, float verticalForce)
         {
             var whileLoopTime = 0f;
-
 
             if (!Input.GetKey(userInput) || !IsGrounded) return;
             if (Input.GetKeyDown(userInput) && IsGrounded)
