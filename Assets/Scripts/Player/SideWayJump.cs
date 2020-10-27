@@ -7,13 +7,17 @@ namespace Player
     {
         [SerializeField] float horizontalForce;
         [SerializeField] float verticalForce;
-        [SerializeField] float maxVelocity;
-        [SerializeField] float maxForce;
         Rigidbody _rb;
 
-        float _whileTimer = 0;
-
+        float _sideJumpTimer;
+        Ray _mouseStartPosition;
+        Ray _mouseCurrentPosition;
         bool IsGrounded => Physics.Raycast(transform.position, Vector3.down, 1.1f, LayerMask.GetMask("Ground"));
+
+        bool CanSideJump =>
+            (Mathf.Abs(_mouseCurrentPosition.direction.x) - Mathf.Abs(_mouseStartPosition.direction.x) >= .5f ||
+             Mathf.Abs(_mouseStartPosition.direction.x) - Mathf.Abs(_mouseCurrentPosition.direction.x) >= .5f) &&
+            Time.time - _sideJumpTimer <= 1;
 
         void Start()
         {
@@ -22,26 +26,39 @@ namespace Player
 
         void Update()
         {
-            // var mp = Camera.main.ScreenPointToRay(Input.mousePosition);
-            // print(mp);
+            _mouseCurrentPosition = Camera.main.ScreenPointToRay(Input.mousePosition);
+
             SideJump(KeyCode.E, this.horizontalForce, this.verticalForce);
-            SideJump(KeyCode.Q, -this.horizontalForce, this.verticalForce);
-            
         }
 
         void SideJump(KeyCode userInput, float horizontalForce, float verticalForce)
         {
+            var whileLoopTime = 0f;
+
+
+            if (!Input.GetKey(userInput) || !IsGrounded) return;
             if (Input.GetKeyDown(userInput) && IsGrounded)
             {
-                _rb.velocity = Vector3.zero;
-                _whileTimer = 0;
-                while (_whileTimer < 1)
-                {
-                    _whileTimer += Time.deltaTime;
-                    _rb.AddForce(new Vector3(horizontalForce, verticalForce, 0));
-                }
+                _mouseStartPosition = Camera.main.ScreenPointToRay(Input.mousePosition);
+                _sideJumpTimer = Time.time;
             }
-        
+
+            if (!CanSideJump) return;
+
+            var mpStartPos = _mouseStartPosition.direction.x;
+            var mpCurrentPos = _mouseCurrentPosition.direction.x;
+
+            _sideJumpTimer = 0;
+
+            _rb.velocity = Vector3.zero;
+            while (whileLoopTime < 1)
+            {
+                whileLoopTime += Time.deltaTime;
+
+                _rb.AddForce(mpCurrentPos > mpStartPos
+                    ? new Vector3(horizontalForce * Time.deltaTime, verticalForce * Time.deltaTime, 0)
+                    : new Vector3(-horizontalForce * Time.deltaTime, verticalForce * Time.deltaTime, 0));
+            }
         }
     }
 }
