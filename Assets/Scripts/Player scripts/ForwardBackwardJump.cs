@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Player_scripts
 {
@@ -6,16 +7,25 @@ namespace Player_scripts
     {
         [SerializeField] float horizontalForce;
         [SerializeField] float verticalForce;
-        protected override float MouseAxisStartPosition => MouseStartPosition.y -.5f; //"-.5f" represents the pivot
+        protected override float MouseAxisStartPosition => MouseStartPosition.y; //"-.5f" to return middle position
 
-        protected override float MouseAxisCurrentPosition => MouseCurrentPosition.y - .5f;
+        protected override float MouseAxisCurrentPosition => MouseCurrentPosition.y;
 
         protected override void MousePosOnInput()
         {
-            if (!Input.GetKeyDown(KeyCode.E) || !PlayerServices.IsGrounded) return;
+            if (!Input.GetKeyDown(UserInput) || !PlayerServices.IsGrounded) return;
             MouseStartPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             MouseAxisStartPosition = MouseStartPosition.y; 
             JumpTime = Time.time;
+        }
+        
+        protected override void DisableJumpMechanic()
+        {
+            foreach (var jumpMechanic in JumpMechanics)
+            {
+                if(jumpMechanic == this) continue;
+                jumpMechanic.enabled = false;
+            }
         }
 
         void Update()
@@ -23,7 +33,8 @@ namespace Player_scripts
             MouseCurrentPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             MouseAxisCurrentPosition = MouseCurrentPosition.y;
             
-            HorizontalJump(KeyCode.E, new Vector3(0, verticalForce, horizontalForce));
+            HorizontalJump(new Vector3(0, verticalForce, horizontalForce));
+            if (Input.GetKeyUp(UserInput)) EnableJumpMechanic();
         }
     }
 }

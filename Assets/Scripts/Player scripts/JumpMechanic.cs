@@ -4,31 +4,41 @@ namespace Player_scripts
 {
     public abstract class JumpMechanic : MonoBehaviour
     {
+        protected const KeyCode UserInput = KeyCode.E;
         protected Vector3 MouseStartPosition;
         protected Vector3 MouseCurrentPosition;
-        protected float JumpTime;
+        protected static JumpMechanic[] JumpMechanics;
 
+        protected float JumpTime { get; set; }
         protected virtual float MouseAxisStartPosition { get; set; }
         protected virtual float MouseAxisCurrentPosition { get; set; }
 
+        void Start()
+        {
+            JumpMechanics = FindObjectsOfType<JumpMechanic>();  
+        }
+
         protected abstract void MousePosOnInput();
+        protected abstract void DisableJumpMechanic();
 
         bool CanJump =>
             (Mathf.Abs(MouseAxisCurrentPosition) - Mathf.Abs(MouseAxisStartPosition) >= .2f ||
              Mathf.Abs(MouseAxisStartPosition) - Mathf.Abs(MouseAxisCurrentPosition) >= .2f) &&
             Time.time - JumpTime <= 1;
 
-        protected void HorizontalJump(KeyCode userInput, Vector3 direction)
+        protected void HorizontalJump(Vector3 direction)
         {
-            if (!Input.GetKey(userInput) || !PlayerServices.IsGrounded) return;
+            if (!Input.GetKey(UserInput) || !PlayerServices.IsGrounded) return;
 
             MousePosOnInput();
 
             if (!CanJump) return;
+            JumpTime = 0;
+
+            DisableJumpMechanic();
             var mouseStartPos = MouseAxisStartPosition;
             var mouseCurrentPos = MouseAxisCurrentPosition;
 
-            
             var whileLoopTime = 0f;
 
             PlayerServices.Rb.velocity = Vector3.zero;
@@ -40,7 +50,14 @@ namespace Player_scripts
                     ? direction * Time.deltaTime
                     : -direction * Time.deltaTime);
             }
-            JumpTime = 0;
+        }
+
+        protected static void EnableJumpMechanic()
+        {
+            foreach (var jumpMechanic in JumpMechanics)
+            {
+                jumpMechanic.enabled = true;
+            }
         }
     }
 }

@@ -7,25 +7,34 @@ namespace Player_scripts
     {
         [SerializeField] float horizontalForce;
         [SerializeField] float verticalForce;
-        protected override float MouseAxisStartPosition => MouseStartPosition.x - .5f;
+        protected override float MouseAxisStartPosition => MouseStartPosition.x;
 
-        protected override float MouseAxisCurrentPosition => MouseCurrentPosition.x -.5f;
+        protected override float MouseAxisCurrentPosition => MouseCurrentPosition.x;
 
         protected override void MousePosOnInput()
         {
-            if (!Input.GetKeyDown(KeyCode.E) || !PlayerServices.IsGrounded) return;
-            
+            if (!Input.GetKeyDown(UserInput) || !PlayerServices.IsGrounded) return;
             MouseStartPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             MouseAxisStartPosition = MouseStartPosition.x;
             JumpTime = Time.time;
+        }
+
+        protected override void DisableJumpMechanic()
+        {
+            foreach (var jumpMechanic in JumpMechanics)
+            {
+                if (jumpMechanic == this) continue;
+                jumpMechanic.enabled = false;
+            }
         }
 
         void Update()
         {
             MouseCurrentPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             MouseAxisCurrentPosition = MouseCurrentPosition.x;
-            
-            HorizontalJump(KeyCode.E, new Vector3(horizontalForce, verticalForce, 0));
+
+            HorizontalJump(new Vector3(horizontalForce, verticalForce, 0));
+            if (Input.GetKeyUp(UserInput)) EnableJumpMechanic();
         }
     }
 }
