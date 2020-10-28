@@ -7,7 +7,7 @@ namespace Player_scripts
     {
         [SerializeField] float horizontalForce;
         [SerializeField] float verticalForce;
-        protected override float MouseAxisStartPosition => MouseStartPosition.y; //"-.5f" to return middle position
+        protected override float MouseAxisStartPosition => MouseStartPosition.y;
 
         protected override float MouseAxisCurrentPosition => MouseCurrentPosition.y;
 
@@ -30,7 +30,6 @@ namespace Player_scripts
 
         void Update()
         {
-            MouseCurrentPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             MouseAxisCurrentPosition = MouseCurrentPosition.y;
             
             HorizontalJump(new Vector3(0, verticalForce, horizontalForce));

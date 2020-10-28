@@ -30,7 +30,6 @@ namespace Player_scripts
 
         void Update()
         {
-            MouseCurrentPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             MouseAxisCurrentPosition = MouseCurrentPosition.x;
 
             HorizontalJump(new Vector3(horizontalForce, verticalForce, 0));

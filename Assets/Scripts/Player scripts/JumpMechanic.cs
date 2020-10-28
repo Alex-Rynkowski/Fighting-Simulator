@@ -28,6 +28,7 @@ namespace Player_scripts
 
         protected void HorizontalJump(Vector3 direction)
         {
+            MouseCurrentPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             if (!Input.GetKey(UserInput) || !PlayerServices.IsGrounded) return;
 
             MousePosOnInput();
