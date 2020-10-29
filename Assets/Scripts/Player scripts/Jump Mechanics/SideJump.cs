@@ -6,18 +6,17 @@ namespace Player_scripts.Jump_Mechanics
 {
     public class SideJump : JumpMechanic
     {
-        
-        protected override float MouseAxisStartPosition => MouseStartPosition.x;
+        protected override float MouseAxisStartPosition => MouseStartPosition[0].x;
 
-        protected override float MouseAxisCurrentPosition => MouseCurrentPosition.x;
+        protected override float MouseAxisCurrentPosition => MouseCurrentPosition[0].x;
 
         protected override float MouseRequiredMovement => (ScreenHeight / ScreenWidth) * (mouseRequiredMovement / 100);
 
         protected override void MousePosOnInput()
         {
             if (!Input.GetKeyDown(UserInput) || !PlayerServices.IsGrounded) return;
-            MouseStartPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-            MouseAxisStartPosition = MouseStartPosition.x;
+            MouseStartPosition[0] = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            MouseAxisStartPosition = MouseStartPosition[0].x;
             JumpTime = Time.time;
         }
 
@@ -32,8 +31,7 @@ namespace Player_scripts.Jump_Mechanics
 
         void Update()
         {
-            print(MouseRequiredMovement);
-            MouseAxisCurrentPosition = MouseCurrentPosition.x;
+            MouseAxisCurrentPosition = MouseCurrentPosition[0].x;
 
             HorizontalJump(new Vector3(horizontalForce, verticalForce, 0));
             EnableJumpMechanic();
